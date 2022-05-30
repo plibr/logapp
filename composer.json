@@ -1,0 +1,9 @@
+{
+    "require":{
+    "yiisoft/yii":"1.1.21",
+    "yiiext/migrate-command":"0.8.0"
+    },
+    "config":{
+    "vendor-dir":"app/protected/vendor/"
+    }
+}
