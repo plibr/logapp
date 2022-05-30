@@ -7,3 +7,6 @@
 
 3. execute migration process
 > $ ./app/protected/yiic migrate up
+
+4. parse access log file to database 
+> $ ./app/protected/yiic logparser
