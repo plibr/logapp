@@ -1,5 +1,6 @@
 <?php
 Yii::import('RestfullYii.actions.ERestBaseAction');
+Yii::import('RestfullYii.filters.CustomFilter');
 Yii::import('RestfullYii.models.CustomLog');
 Yii::import('RestfullYii.filters.CustomGroupBy');
 /**
@@ -31,24 +32,38 @@ class EActionRestGET extends ERestBaseAction
 			function($visibleProperties, $hiddenProperties) use($id, $param1, $param2) {
 				switch ($this->getRequestActionType($id, $param1, $param2, 'get')) {
 					case 'RESOURCES':
-						if($this->getModelName() == 'Log' && is_null($_GET)){
-							$customLog = new CustomLog();
-							return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER,[
-								$customLog->getRows(), $this->getModelName(), $this->getRelations(), $customLog->getRowCount(),$visibleProperties, $hiddenProperties
-							]);
-						}else{
-							if(isset($_GET['group_by'])){
+						
+							if(isset($_GET['filter'])){
+								$haystack = $_GET['filter'];
+								$needle = "},";
+								if (strpos($haystack,$needle) !== false) {
+									$customFilter = new CustomFilter($_GET["filter"],true);
+									return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER,[
+										$customFilter->getRows(), $this->getModelName(), $this->getRelations(), $customFilter->getRowCount(),$visibleProperties, $hiddenProperties
+									]);
+								}else{
+									$customFilter = new CustomFilter($_GET["filter"],false);
+									return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER,[
+										$customFilter->getRows(), $this->getModelName(), $this->getRelations(), $customFilter->getRowCount(),$visibleProperties, $hiddenProperties
+									]);
+								}
+							}elseif(isset($_GET['group_by'])){
 								if ($_GET["group_by"]=="ip") {
 									$customGroupBy = new CustomGroupBy();
 									return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER,[
 										$customGroupBy->getRows(), $this->getModelName(), $this->getRelations(), $customGroupBy->getRowCount(),$visibleProperties, $hiddenProperties
 									]);
 								}
+							}else{
+								$customLog = new CustomLog();
+								return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER,[
+									$customLog->getRows(), $this->getModelName(), $this->getRelations(), $customLog->getRowCount(),$visibleProperties, $hiddenProperties
+								]);
 							}
-							return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER, [
-								$this->getModel($id), $this->getModelName(), $this->getRelations(), $this->getModelCount($id), $visibleProperties, $hiddenProperties
-							]);
-						}
+							// return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER, [
+							// 	$this->getModel($id), $this->getModelName(), $this->getRelations(), $this->getModelCount($id), $visibleProperties, $hiddenProperties
+							// ]);
+						
 						break;
 					case 'CUSTOM':
 						return $this->controller->emitRest("req.get.$id.render", [$param1, $param2]);
