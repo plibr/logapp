@@ -13,3 +13,7 @@
 
 5. to see log data list by GET
 visit http://logapp.plibr.click/index.php/api/log
+
+6. to see log data list group by ip
+
+visit http://logapp.plibr.click/index.php/api/log?group_by=ip

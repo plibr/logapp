@@ -1,6 +1,7 @@
 <?php
 Yii::import('RestfullYii.actions.ERestBaseAction');
 Yii::import('RestfullYii.models.CustomLog');
+Yii::import('RestfullYii.filters.CustomGroupBy');
 /**
  * Action For Rest Gets
  *
@@ -30,12 +31,20 @@ class EActionRestGET extends ERestBaseAction
 			function($visibleProperties, $hiddenProperties) use($id, $param1, $param2) {
 				switch ($this->getRequestActionType($id, $param1, $param2, 'get')) {
 					case 'RESOURCES':
-						if($this->getModelName() == 'Log'){
+						if($this->getModelName() == 'Log' && is_null($_GET)){
 							$customLog = new CustomLog();
 							return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER,[
 								$customLog->getRows(), $this->getModelName(), $this->getRelations(), $customLog->getRowCount(),$visibleProperties, $hiddenProperties
 							]);
 						}else{
+							if(isset($_GET['group_by'])){
+								if ($_GET["group_by"]=="ip") {
+									$customGroupBy = new CustomGroupBy();
+									return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER,[
+										$customGroupBy->getRows(), $this->getModelName(), $this->getRelations(), $customGroupBy->getRowCount(),$visibleProperties, $hiddenProperties
+									]);
+								}
+							}
 							return $this->controller->emitRest(ERestEvent::REQ_GET_RESOURCES_RENDER, [
 								$this->getModel($id), $this->getModelName(), $this->getRelations(), $this->getModelCount($id), $visibleProperties, $hiddenProperties
 							]);
