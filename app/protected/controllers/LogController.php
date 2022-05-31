@@ -2,35 +2,46 @@
 
 class LogController extends Controller
 {
-	public function actionIndex()
-	{
-		$this->render('index');
-	}
-
-	// Uncomment the following methods and override them if needed
-	/*
 	public function filters()
 	{
-		// return the filter configuration for this controller, e.g.:
 		return array(
-			'inlineFilterName',
+			'accessControl', // perform access control for CRUD operations
 			array(
-				'class'=>'path.to.FilterClass',
-				'propertyName'=>'propertyValue',
+				'RestfullYii.filters.ERestFilter +
+				REST.GET, REST.PUT, REST.POST, REST.DELETE, REST.OPTIONS'
 			),
 		);
 	}
 
 	public function actions()
 	{
-		// return external action classes, e.g.:
 		return array(
-			'action1'=>'path.to.ActionClass',
-			'action2'=>array(
-				'class'=>'path.to.AnotherActionClass',
-				'propertyName'=>'propertyValue',
+			'REST.' => 'RestfullYii.actions.ERestActionProvider',
+		);
+	}
+
+	public function accessRules()
+	{
+		return array(
+			array('allow', 'actions' => array('REST.GET', 'REST.PUT', 'REST.POST', 'REST.DELETE', 'REST.OPTIONS'),
+				'users' => array('*'),
+			),
+			array('deny',
+				'users' => array('*'),
 			),
 		);
 	}
-	*/
+
+	public function restEvents()
+    {
+    	$this->onRest('req.get.resource.render', function() {
+    		//Custom logic for this route.
+    		//Should output results.
+    		$this->emitRest('req.render.json', [
+    			[
+    				'type'=>'raw',
+    			]
+    		]);
+		});
+	}
 }

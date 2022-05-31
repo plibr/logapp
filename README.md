@@ -10,3 +10,6 @@
 
 4. parse access log file to database 
 > $ ./app/protected/yiic logparser
+
+5. to see log data list by GET
+visit http://logapp.plibr.click/index.php/api/log

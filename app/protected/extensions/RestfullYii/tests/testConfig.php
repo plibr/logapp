@@ -1,90 +1,85 @@
 <?php
-require_once( dirname(__FILE__) . '/../vendor/autoload.php');
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
+//echo realpath(__DIR__ . '/../vendor'); exit();
 return array(
-	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
+	'basePath'=>dirname(__FILE__).'/../../../..',
+	'name'=>'RestfullYii Testing App',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
 
+	'aliases' => array(
+        'app' => 'application',
+        'RestfullYii' =>realpath(__DIR__ . '/../')
+	),
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
-	),
-
-	'aliases' => array(
-        'RestfullYii' =>realpath(__DIR__ . '/../extensions/RestfullYii')
+		//'vendor.starship.scalar.src.Starship.Scalar.*'
 	),
 
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
-		/*
+		
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
-			'password'=>'gii',
+			'password'=>'Password1',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
 		),
-		*/
 	),
 
 	// application components
 	'components'=>array(
-
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 		),
-
-		// uncomment the following to enable URLs in path-format
-		'urlManager' => array(
-			'urlFormat' => 'path',
-			'rules' => require(
-				dirname(__FILE__).'/../extensions/RestfullYii/config/routes.php'
+		'fixture'=>array(
+				'class'=>'system.test.CDbFixtureManager',
 			),
+		// uncomment the following to enable URLs in path-format
+		
+		'urlManager'=>array(
+			'urlFormat'=>'path',
+			'rules'=>require(dirname(__FILE__).'/../config/routes.php'),
 		),
-
-		// database settings are configured in database.php
-		'db'=>require(dirname(__FILE__).'/database.php'),
-
+		'db'=>array(
+			'connectionString' => 'mysql:host=localhost;dbname=restfullyii_test',
+			'emulatePrepare' => true,
+			'username' => 'restfulyiiuser',
+			'password' => '',
+			'charset' => 'utf8',
+		),
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
-			'errorAction'=>YII_DEBUG ? null : 'site/error',
+			'errorAction'=>'site/error',
 		),
-
 		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
 				array(
 					'class'=>'CFileLogRoute',
-					'levels'=>'error, warning',
+					'levels'=>'error, warning, trace',
 				),
 				// uncomment the following to show log messages on web pages
-				/*
 				array(
 					'class'=>'CWebLogRoute',
 				),
-				*/
 			),
 		),
-
 	),
 
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
-		'RestfullYii' => array(
-			'post.filter.req.auth.ajax.user' => function(){
-				return true;
-			}
-		),
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
 	),
 );
+
